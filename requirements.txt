@@ -7,6 +7,7 @@ openpyxl==3.1.2
 
 # Data validation (comes with FastAPI but good to be explicit)
 pydantic==2.9.2
+pydantic-settings==2.6.1
 
 # HTTP client for testing
 requests==2.32.3
@@ -16,3 +17,7 @@ python-multipart==0.0.6
 
 # Environment variable support
 python-dotenv==1.0.0
+
+# Testing dependencies
+pytest==8.3.3
+pytest-asyncio==0.24.0

@@ -284,13 +284,23 @@ Log levels: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`
 
 ### Windows IIS Deployment
 
-1. **Install Python on Windows Server**
-2. **Configure IIS with Python CGI/FastCGI**
-3. **Set production environment**:
-    ```env
-    DEBUG=False
-    LOG_LEVEL=WARNING
-    ```
+> **📋 For detailed IIS setup instructions, see [docs/IIS_DEPLOYMENT.md](docs/IIS_DEPLOYMENT.md)**
+
+**Quick Setup:**
+
+1. **Install Python 3.11+ on Windows Server**
+2. **Install IIS with CGI/FastCGI support**
+3. **Configure application pool and site**
+4. **Set production environment variables**
+
+**Production Environment:**
+
+```env
+DEBUG=False
+LOG_LEVEL=WARNING
+TEMPLATES_DIR=C:\inetpub\wwwroot\py-excel-api\templates
+LOGS_DIR=C:\inetpub\logs\py-excel-api
+```
 
 ### Docker Deployment (Optional)
 
