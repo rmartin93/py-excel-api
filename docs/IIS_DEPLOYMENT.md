@@ -91,29 +91,51 @@ python -m pip install -r requirements.txt
 
 ## ⚙️ Step 5: Configure IIS Application
 
-### 5.1 Create Application Pool
+### 5.1 Create Application Pool (GUI Method)
 
-```powershell
-# Import IIS module
-Import-Module WebAdministration
+✅ **You've already done this!** You created the application and application pool.
 
-# Create new application pool
-New-WebAppPool -Name "PyExcelAPI" -Force
+To verify your configuration:
 
-# Configure application pool
-Set-ItemProperty -Path "IIS:\AppPools\PyExcelAPI" -Name processModel.identityType -Value ApplicationPoolIdentity
-Set-ItemProperty -Path "IIS:\AppPools\PyExcelAPI" -Name recycling.periodicRestart.time -Value "00:00:00"
-Set-ItemProperty -Path "IIS:\AppPools\PyExcelAPI" -Name processModel.idleTimeout -Value "00:00:00"
-```
+1. **Open IIS Manager**
+2. **Click "Application Pools"** in the left panel
+3. **Find your application pool** and right-click → **Advanced Settings**
+4. **Verify these settings:**
+    - **Identity**: `ApplicationPoolIdentity` (recommended)
+    - **Idle Time-out**: `00:00:00` (to prevent shutdown)
+    - **Regular Time Interval**: `00:00:00` (to prevent recycling)
 
-### 5.2 Create IIS Application
+### 5.2 Create IIS Application (GUI Method)
 
-```powershell
-# Create IIS application
-New-WebApplication -Site "Default Web Site" -Name "py-excel-api" -PhysicalPath "C:\inetpub\wwwroot\py-excel-api" -ApplicationPool "PyExcelAPI"
-```
+✅ **You've already done this!** You converted the directory to an application.
 
-### 5.3 Configure FastCGI
+### 5.3 Configure FastCGI (GUI Method)
+
+**Step A: Configure FastCGI Application (Server Level)**
+
+1. **Click on your SERVER NAME** (top level, not website)
+2. **Double-click "FastCGI Settings"**
+3. **Click "Add Application..."** on the right
+4. **Fill in these values:**
+    - **Full Path**: `C:\Users\[YourUsername]\AppData\Local\Programs\Python\Python313\python.exe`
+    - **Arguments**: `C:\inetpub\wwwroot\py-excel-api\iis_handler.py`
+    - **Max Instances**: `4`
+    - **Request Timeout**: `600`
+    - **Activity Timeout**: `600`
+5. **Click OK**
+
+**Step B: Add Handler Mapping (Application Level)**
+
+1. **Navigate to your py-excel-api application** in IIS Manager
+2. **Double-click "Handler Mappings"**
+3. **Click "Add Script Map..."** on the right
+4. **Fill in these values:**
+    - **Request path**: `*`
+    - **Executable**: `C:\Users\[YourUsername]\AppData\Local\Programs\Python\Python313\python.exe %s`
+    - **Name**: `Python FastCGI`
+5. **Click OK**
+
+### 5.3 Configure FastCGI (PowerShell Method - Alternative)
 
 ```powershell
 # Add FastCGI application
