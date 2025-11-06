@@ -1,0 +1,18 @@
+# Core FastAPI dependencies
+fastapi==0.115.4
+uvicorn[standard]==0.32.1
+
+# Excel processing
+openpyxl==3.1.2
+
+# Data validation (comes with FastAPI but good to be explicit)
+pydantic==2.9.2
+
+# HTTP client for testing
+requests==2.32.3
+
+# File upload support
+python-multipart==0.0.6
+
+# Environment variable support
+python-dotenv==1.0.0

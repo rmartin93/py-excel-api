@@ -1,0 +1,27 @@
+[tool.pytest.ini_options]
+filterwarnings = [
+    # Filter out external library deprecation warnings we can't control:
+    # - starlette/fastapi: asyncio.iscoroutinefunction() deprecation (Python 3.16)
+    # - openpyxl: datetime.utcnow() deprecation in Excel metadata
+    # - httpx: content parameter API changes in test client
+    # These are library maintainer responsibilities, not actionable for us.
+    "ignore::DeprecationWarning:starlette.*",
+    "ignore::DeprecationWarning:fastapi.*",
+    "ignore::DeprecationWarning:openpyxl.*",
+    "ignore::DeprecationWarning:httpx.*",
+    # Keep our application warnings visible so we can fix them
+    "default::DeprecationWarning:app.*",
+    "default::UserWarning:app.*"
+]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--tb=short",
+    "--strict-markers"
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests"
+]
