@@ -171,6 +171,7 @@ IIS FastCGI handler for Python Excel API
 This script serves as the entry point for IIS to run our FastAPI application
 """
 
+#!/usr/bin/env python3
 import sys
 import os
 from pathlib import Path
@@ -188,22 +189,19 @@ os.environ.setdefault('LOGS_DIR', 'C:\\inetpub\\logs\\py-excel-api')
 try:
     from app.main import app
 
-    # For FastCGI, we need to use a WSGI server
-    from fastapi.middleware.wsgi import WSGIMiddleware
-    import uvicorn
+    # Convert FastAPI (ASGI) to WSGI for FastCGI
+    from uvicorn.middleware.wsgi import WSGIMiddleware
 
-    # Create WSGI application
-    if __name__ == "__main__":
-        # This won't be called in FastCGI mode, but kept for testing
-        uvicorn.run(app, host="0.0.0.0", port=8000)
-    else:
-        # FastCGI mode - create WSGI callable
-        application = app
+    # This is what FastCGI will call
+    application = WSGIMiddleware(app)
 
 except Exception as e:
     # Log startup errors
-    with open("C:\\inetpub\\logs\\py-excel-api\\startup_error.log", "a") as f:
-        f.write(f"Startup error: {e}\\n")
+    error_log = str(app_dir / 'startup_error.log')
+    with open(error_log, 'a') as f:
+        f.write(f"Startup error: {e}\n")
+        import traceback
+        traceback.print_exc(file=f)
     raise
 ```
 
@@ -377,3 +375,5 @@ try {
 ---
 
 > **💡 Pro Tip**: For production environments, consider using a proper ASGI server like Hypercorn or Uvicorn behind IIS as a reverse proxy for better performance and features.
+
+Get-Content (dir C:\inetpub\logs\LogFiles\W3SVC1\ | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName | Select-Object -Last 20
