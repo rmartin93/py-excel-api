@@ -377,3 +377,31 @@ try {
 > **💡 Pro Tip**: For production environments, consider using a proper ASGI server like Hypercorn or Uvicorn behind IIS as a reverse proxy for better performance and features.
 
 Get-Content (dir C:\inetpub\logs\LogFiles\W3SVC1\ | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName | Select-Object -Last 20
+
+## Random Notes
+
+```python
+from fastapi import FastAPI, Request
+
+app = FastAPI()
+
+@app.get("/debug-scope")
+async def debug_scope(request: Request):
+    scope_dict = {}
+
+    for key, value in request.scope.items():
+        # headers need special handling
+        if key == "headers":
+            try:
+                scope_dict[key] = {k.decode(): v.decode() for k, v in value}
+            except Exception:
+                scope_dict[key] = str(value)
+        # bytes -> string
+        elif isinstance(value, bytes):
+            scope_dict[key] = value.decode(errors="ignore")
+        # anything else -> string (safe fallback)
+        else:
+            scope_dict[key] = str(value)
+
+    return {"scope": scope_dict}
+```
